@@ -1,0 +1,75 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Systems Stealth Palette */
+  --color-background: #000000;    /* Pure Black */
+  --color-foreground: #ffffff;    /* Pure White */
+  
+  --color-primary: #ffffff;       
+  --color-primary-foreground: #000000;
+  
+  --color-accent: #ff8c42;        /* System Orange */
+  --color-card: #0a0a0a;          /* Stealth Cards */
+  --color-border: #1a1a1a;        /* Subtle Borders */
+  
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* Shiki / rehype-pretty-code Styles - Using standard CSS to avoid @apply errors */
+figure[data-rehype-pretty-code-figure] {
+  margin-top: 1.5rem;    /* Equivalent to my-6 */
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  border-radius: 0.5rem; /* Equivalent to rounded-lg */
+  border: 1px solid var(--color-border);
+  background-color: #0d1117;
+}
+
+pre[data-language] {
+  padding: 1rem 0;
+  line-height: 1.7;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
+[data-line] {
+  padding: 0 1rem;
+  border-left: 2px solid transparent;
+}
+
+[data-highlighted-line] {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left-color: var(--color-accent);
+}
+
+code[data-line-numbers] {
+  counter-reset: line;
+}
+
+code[data-line-numbers] > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  margin-right: 1rem;
+  display: inline-block;
+  width: 1rem;
+  text-align: right;
+  color: rgba(139, 146, 160, 0.4);
+}
+
+/* Inline code (like `std::span`) */
+:not(pre) > code {
+  border-radius: 0.25rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.1rem 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-accent);
+}
