@@ -1,6 +1,14 @@
-import { getPostData } from '@/lib/markdown';
+import { getPostData, getJournalEntries } from '@/lib/markdown';
 import { Calendar, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+
+export async function generateStaticParams() {
+  const posts = getJournalEntries();
+ 
+  return posts.map((post) => ({
+    id: post.id,
+  }));
+}
 
 // In Next.js 15, params is a Promise that must be awaited
 export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
