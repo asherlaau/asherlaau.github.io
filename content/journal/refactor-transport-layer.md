@@ -1,4 +1,3 @@
-# Why We Refactored: From PeerId-Based Transport to Identity-Aware Session Layer
 ---
 title: "Refactor on transportation layer"
 date: "2026-01-29"
@@ -6,6 +5,7 @@ tags: ["C++23", "Distributed Systems", "Concurrency", "Networking"]
 description: "bad design that let tranport also handle rounting the protocol handler."
 ---
 
+# Why We Refactored: From PeerId-Based Transport to Identity-Aware Session Layer
 > JDS Cloud Networking Architecture Rationale (2026-01)
 
 This document explains **why the previous design was flawed**, what risks it created, and how the new **Transport + Session (ClusterNet)** architecture improves correctness, scalability, performance isolation, and long-term maintainability.
