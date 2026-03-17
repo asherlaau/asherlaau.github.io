@@ -131,3 +131,93 @@ void prepare_texture() {
 ans : 
 
 it is undefine behavior, using thread, and pass local variable address to a thread, you see when prepare_texture()after the for loop, it calls the mutex destructor and threads destructor, and accessing m is ub, and also, thread is destoried but still joinable, it will call std::terminate(). possible fix is use jthread, it will call the join when complete, and make sure mutex is always outlive the thread.
+
+## Challenge 5
+
+```cpp
+#include <iostream>
+
+int main() {
+  void * p = &p;
+  std::cout << bool(p);
+}
+```
+ans: 1 
+
+in c++ 
+
+type | declarator | initializer 
+
+the declarator is registered, and the type is void *, when the initilizer try to name look up, it check the p, p exist and it check the type it is valid type and semantic correct, so when the initilizer try to &p, it is valid, and p has storage duration, so it can do it. 
+
+more if the type is auto 
+
+
+auto p = &p;
+
+when the name look up for p, it found, but the type is auto which needs to be comfirmed when the initializer is completed, and the type of p is placehold type, type is not yet deduced, so it cannot be odr-used in the initializer.
+
+ODR-used is a technical term from the C++ standard.
+It means an object or function is used in a way that requires its definition and its actual type/value to exist.
+
+in the lambda it is same: 
+
+```cpp
+auto f = [](){
+    f()
+};
+```
+like it cannot compile, the type is auto, the declarator is f, and the initilizer is lambda, the compiler can construct the closure type but when construct the operator (), it name look up f, the f has type auto which is not yet deduced, you cannot ODR-used it. 
+
+the solution is give it a type
+function<void()> f, 
+or 
+y combinator, 
+auto f = [](this auto&&self){
+    self.f()
+};
+
+the opreator () becomes a template function, 
+
+template<T>
+operator()(this T&&self){
+    self();
+};
+
+the recursive dependency is moved from the variable being declared to a function template parameter that can be deduced later.
+
+```
+auto f = [](auto self, int n) -> void {
+    if (n == 0) return;
+    self(self, n - 1);
+};
+
+f(f, 3);
+
+struct __lambda {
+    template<class Self>
+    void operator()(Self self, int n) const {
+        if (n == 0) return;
+        self(self, n - 1);
+    }
+};
+the lambda would look like this,
+void operator()<__lambda>(__lambda self, int n) const
+```
+
+if dont want to use this, pass the 
+f to it, so the auto in the lambda becomes __lambda
+
+"""this""" is a keyword that tells the compiler that the parameter is the object parameter (the object on which the member function is invoked).
+
+it has to be in the first parameter and the this keyword has to put at the left most place. 
+
+```cpp
+const this ... is not valid
+and f(int x, this ...) is not valid. 
+```
+
+and also when you use this 
+
+- it cannot be virtual
+- it cannot override a virtual function
