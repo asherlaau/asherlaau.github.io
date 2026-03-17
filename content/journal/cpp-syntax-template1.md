@@ -221,3 +221,69 @@ and also when you use this
 
 - it cannot be virtual
 - it cannot override a virtual function
+
+## Challenge 6
+
+```cpp
+#include <iostream>
+
+class A
+{
+public:
+    A() { std::cout << "A"; }
+    A(const A &) { std::cout << "a"; }
+};
+
+class B: public virtual A
+{
+public:
+    B() { std::cout << "B"; }
+    B(const B &) { std::cout << "b"; }
+};
+
+class C: public virtual A
+{
+public:
+    C() { std::cout << "C"; }
+    C(const C &) { std::cout << "c"; }
+};
+
+class D: B, C
+{
+public:
+    D() { std::cout << "D"; }
+    D(const D &) { std::cout << "d"; }
+};
+
+int main()
+{
+    D d1;
+    D d2(d1);
+}
+
+```
+
+answer :  ABCDABCd
+
+D d1 would become like 
+```
+class D: B, C
+{
+public:
+    D() :A(), B(), C() { std::cout << "D"; }
+    D(const D &):A(), B(), C() { std::cout << "d"; }
+};
+```
+
+virtual base classes are initialized in the order they appear on a depth-first left-to-right traversal of the directed acyclic graph of base classes, where “left-to-right” is the order of appearance of the base classes in the derived class base-specifier-list.
+
+if you want to call the copy constructor
+
+```
+class D: B, C
+{
+public:
+    D() :A(), B(), C() { std::cout << "D"; }
+    D(const D & other):A(other), B(other), C(other) { std::cout << "d"; }
+};
+```
